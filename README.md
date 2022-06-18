@@ -6,13 +6,13 @@ Swagger est utilisé pour la documentation de cette API.
 
 ## Configurations
 
-Ouvrir un terminal 
+1. Ouvrir un terminal 
 
-Ecrire : sudo gedit /etc/hive/conf/hive-site.xml
+2. Ecrire : sudo gedit /etc/hive/conf/hive-site.xml
 
 Cette commande permet d'ouvrir le fichier hive-site.xml en tant qu'administrateur
 
-Dans ce fichier, ajoutez les propriétés ci-dessous
+3. Dans ce fichier, ajoutez les propriétés ci-dessous
 
 ```
 
@@ -47,7 +47,7 @@ Dans ce fichier, ajoutez les propriétés ci-dessous
 ```
 
 
-Executez les commandes ci-dessous dans Hive:
+4. Executez les commandes ci-dessous dans Hive:
 
 ```
 set hive.support.concurrency=true;
@@ -60,7 +60,7 @@ set hive.compactor.worker.threads=2;
 
 ![config](img/config.PNG)
 
-Créer la table entreprises dans la database default
+5. Créer la table entreprises dans la database default
 
 ```
 create table entreprises(id int ,name string, country string, activity string ) clustered by (id) into 4 buckets stored as orc TBLPROPERTIES('transactional'='true');
@@ -69,7 +69,7 @@ create table entreprises(id int ,name string, country string, activity string ) 
 
 ## Installation du package python Sasl pour Hive
 
-- Ajouter le folder sasl dans le venv de l'application (/Lib/site-packages)
+- Ajoutez le folder sasl dans le venv de l'application (/Lib/site-packages)
 
 ## Gestion des entreprises (CRUD)
 
