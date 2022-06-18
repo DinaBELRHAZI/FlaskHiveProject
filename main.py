@@ -2,18 +2,23 @@ import json
 
 import flask
 from pyhive import hive
-from flask import Flask, jsonify, Response, request, flash, redirect
+from flask import Flask, jsonify, Response, request, flash, redirect, render_template, make_response
 from entreprises import entreprises
+import connexion
 
-app = Flask(__name__)
+# Création de  l'instance de l'application
+app = connexion.App(__name__, specification_dir='./')
+
+# Lecture du fichier swagger.yml pour définir les points d'arrivée (endpoints)
+app.add_api('swagger.yml')
 
 connection = hive.connect(host="192.168.246.128", username="cloudera",
                           port=10000)
 
 
-# Get list of all employees
+# Get list of all entreprises
 @app.route('/getall')
-def getallemployees():
+def getallentreprises():
     cursor = connection.cursor()
     query = "SELECT * FROM entreprises"
     cursor.execute(query)
@@ -28,7 +33,7 @@ def getallemployees():
     return Response(json.dumps([ob.__dict__ for ob in listRow]), mimetype='application/json')
 
 
-# Get 1 employees by id
+# Get 1 entreprise by id
 @app.route('/get/<id>')
 def getone(id):
     print(id)
@@ -36,17 +41,20 @@ def getone(id):
     query = "SELECT * FROM entreprises WHERE id =" + id
     cursor.execute(query)
     test = cursor.fetchall()
-    print(test)
-    entreprise = entreprises(test[0][0], test[0][1], test[0][2], test[0][3])
-    jsonStr = json.dumps(entreprise.__dict__)
-    return Response(jsonStr, mimetype='application/json')
+    if (len(test) > 0):
+        print(test)
+        entreprise = entreprises(test[0][0], test[0][1], test[0][2], test[0][3])
+        jsonStr = json.dumps(entreprise.__dict__)
+        return Response(jsonStr, mimetype='application/json')
+    else:
+        return make_response(
+            "the company don't exist. Please, change the id".format(lname=id), 200
+        )
 
 
-# Add 1 employees
-@app.route('/add', methods=['POST'])
+# Add 1 entreprise
+@app.route('/add', methods=['GET', 'POST'])
 def addone():
-    # print(id)
-
     try:
         _json = request.json
         _name = _json["name"]
@@ -66,13 +74,13 @@ def addone():
             # flash('User updated successfully!')
             return flask.redirect('/getall')
         else:
-            return 'Error while adding emplyees'
+            return 'Error while adding company'
 
     finally:
         return flask.redirect('/getall')
 
 
-# Update 1 employees
+# Update 1 entreprise
 @app.route('/update/<id>', methods=['POST'])
 def updateone(id):
     # print(id)
@@ -96,7 +104,7 @@ def updateone(id):
             # flash('User updated successfully!')
             return flask.redirect('/get/' + id)
         else:
-            return 'Error while adding employees'
+            return 'Error while adding entreprise'
 
     finally:
         return flask.redirect('/get/' + id)
@@ -111,10 +119,10 @@ def deleteone(id):
         return flask.redirect('/getall')
 
     finally:
-        return flask.redirect('/getall')
-
-
+        return make_response(
+            "the company successfully deleted".format(lname=id), 200
+        )
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='127.0.0.1', port=5000, debug=True)

@@ -1,0 +1,133 @@
+swagger: "2.0"
+info:
+  description: Fichier swagger associé à notre API
+  version: "1.0.0"
+  title: Swagger pour API ReST
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+
+paths:
+  /getall:
+    get:
+      operationId: module.read_all
+      tags:
+        - Entreprises
+      summary: Lecture de la liste entière
+      description: La liste des entreprises
+      responses:
+        200:
+          description: Résultat trouvé !
+
+
+  /get/{id}:
+    get:
+      operationId: module.read_one
+      tags:
+        - Entreprises
+      summary: La liste des entreprises
+      description: Affichage de la liste des entreprises
+      parameters:
+        - name: id
+          in: path
+          description: id de l'entreprise recherchée
+          type: string
+          required: True
+      responses:
+        200:
+          description: Résultat trouvé !
+
+  /add:
+    post:
+      operationId: module.create
+      tags:
+        - Entreprises
+      summary: Enregistrer une entreprise
+      description: Ajout d'une entreprise
+      parameters:
+        - name: entreprise
+          in: body
+          description: Enregistrement à créer
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: id de l'entreprise
+              name:
+                type: string
+                description: Nom de l'entreprise
+              country:
+                type: string
+                description: Pays d'origine de l'entreprise
+              activity:
+                type: string
+                description: Activité de l'entreprise
+      responses:
+        201:
+          description: L'entreprise a été ajoutée avec succes
+
+  /update/{id}:
+    post:
+      operationId: module.update
+      tags:
+        - Entreprises
+      summary: Mettre jour les données d'une entreprise
+      description: Mettre à jour un enregistremnt
+      parameters:
+        - name: id
+          in: path
+          description: id de l'entreprise
+          type: string
+          required: True
+        - name: entreprise
+          in: body
+          description: informations de l'entreprise
+          required: True
+          schema:
+            $ref: "#/definitions/Entreprises"
+      responses:
+        200:
+          description: Succès dans la mise à jour
+
+
+  /delete/{id}:
+    delete:
+      operationId: module.delete
+      tags:
+        - Entreprises
+      summary: Supprimer une entreprise
+      description: Supprimer un enregistrement
+      parameters:
+        - name: id
+          in: path
+          description: id de l'entreprise
+          type: string
+          required: True
+      responses:
+        200:
+          description: Succès dans la suppression
+
+definitions:
+  Entreprises:
+    type: "object"
+    required:
+      - "name"
+      - "country"
+      - "activity"
+    properties:
+      name:
+        type: "string"
+      country:
+        type: "string"
+      activity:
+        type: "string"
+    example:
+      name: "H&M"
+      country: "France"
+      activity: "Textile"
+
